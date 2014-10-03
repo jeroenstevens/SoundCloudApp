@@ -43,19 +43,32 @@ public class MusicListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.d(TAG, "getView : " + position);
+        ViewHolder viewHolder;
 
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.music_list_view_row, null);
+
+            viewHolder = new ViewHolder();
+
+            viewHolder.trackArtist = (TextView) convertView.findViewById(R.id.track_title);
+            viewHolder.trackTitle = (TextView) convertView.findViewById(R.id.track_artist);
+
+            convertView.setTag(viewHolder);
+
+        } else {
+           viewHolder = (ViewHolder) convertView.getTag();
         }
 
         final Track track = getItem(position);
 
-        TextView trackTitleTextView = (TextView) convertView.findViewById(R.id.track_title);
-        TextView trackArtistTextView = (TextView) convertView.findViewById(R.id.track_artist);
-
-        trackTitleTextView.setText(track.title);
-        trackArtistTextView.setText(track.artist);
+        viewHolder.trackTitle.setText(track.title);
+        viewHolder.trackArtist.setText(track.artist);
 
         return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView trackArtist;
+        public TextView trackTitle;
     }
 }
