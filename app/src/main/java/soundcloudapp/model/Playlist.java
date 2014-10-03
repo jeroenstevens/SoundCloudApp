@@ -1,6 +1,5 @@
 package soundcloudapp.model;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -16,6 +15,7 @@ public class Playlist {
     }
 
     public static Track getTrack(Integer key) {
+        sCurrentPosition = key;
         return sTracks.get(key);
     }
 
@@ -37,19 +37,4 @@ public class Playlist {
 
         return nextTrack;
     }
-
-//    public static Track getPreviousTrack(Track track) {
-//        Map.Entry<Integer, Track> previousEntry = sTracks.lowerEntry(sCurrentPosition);
-//
-//        Track previousTrack;
-//        if (previousEntry != null) {
-//            previousTrack = previousEntry.getValue();
-//            sCurrentPosition--;
-//        } else {
-//            previousEntry = sTracks.lastEntry().getValue();
-//            sCurrentPosition = sCounter;
-//        }
-//
-//        return previousTrack;
-//    }
 }

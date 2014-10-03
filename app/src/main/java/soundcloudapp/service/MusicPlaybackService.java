@@ -15,20 +15,20 @@ import android.util.Log;
 import java.io.IOException;
 
 import soundcloudapp.R;
+import soundcloudapp.model.Playlist;
 import soundcloudapp.model.Track;
 
-public class MusicPlaybackService extends Service implements MediaPlayer.OnPreparedListener {
+public class MusicPlaybackService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
 
     private static final String TAG = "MusicPlaybackService";
 
     private static final String SERVICE_PREFIX = "soundcloudapp.";
 
-    public static final String SERVICE_PLAY = SERVICE_PREFIX + "PLAY";
-    public static final String SERVICE_RESUME_PLAYING = SERVICE_PREFIX + "RESUME_PLAYING";
-    public static final String SERVICE_PAUSE = SERVICE_PREFIX + "PAUSE";
+    public static final String SERVICE_TOGGLE_PLAY = SERVICE_PREFIX + "TOGGLE_PLAY";
 
-    private static MediaPlayer sMediaPlayer;
+    private MediaPlayer sMediaPlayer;
     private NotificationManager mNotificationManager;
+    private Track mCurrentTrack;
 
     @Override
     public IBinder onBind(Intent intent) { return null; }
@@ -43,6 +43,7 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
         sMediaPlayer = new MediaPlayer();
         sMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         sMediaPlayer.setOnPreparedListener(this);
+        sMediaPlayer.setOnCompletionListener(this);
 
         setBroadcastReceiver();
     }
@@ -53,6 +54,7 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
             sMediaPlayer.setDataSource(track.streamUrl);
             sMediaPlayer.prepare();
             sendTicker(track);
+            mCurrentTrack = track;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,14 +63,14 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         Log.d(TAG, "onPrepared");
-        togglePlay();
+        mediaPlayer.start();
     }
 
-    private void togglePlay() {
-        if (sMediaPlayer.isPlaying()) {
+    private void togglePlay(Track track) {
+        if (sMediaPlayer.isPlaying() && mCurrentTrack.id.equals(track.id)) {
             sMediaPlayer.pause();
         } else {
-            sMediaPlayer.start();
+            prepareThenPlay(track);
         }
     }
 
@@ -81,20 +83,15 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
                 String action = intent.getAction();
                 Log.d(TAG, action);
 
-                if (action.equals(SERVICE_PLAY)) {
-                    prepareThenPlay((Track) intent.getSerializableExtra("track"));
-                } else if (action.equals(SERVICE_PAUSE)) {
-                    togglePlay();
-                } else if (action.equals(SERVICE_RESUME_PLAYING)) {
-                    togglePlay();
+                if (action.equals(SERVICE_TOGGLE_PLAY)) {
+                    Track track = (Track) intent.getSerializableExtra("track");
+                    togglePlay(track);
                 }
             }
         };
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(SERVICE_PLAY);
-        intentFilter.addAction(SERVICE_PAUSE);
-        intentFilter.addAction(SERVICE_RESUME_PLAYING);
+        intentFilter.addAction(SERVICE_TOGGLE_PLAY);
         registerReceiver(mIntentReceiver, intentFilter);
     }
 
@@ -107,5 +104,10 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
                 .build();
 
         mNotificationManager.notify(0, notification);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        prepareThenPlay(Playlist.getNextTrack(mCurrentTrack));
     }
 }
