@@ -45,14 +45,6 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
         // set OnCompletionListener
         // execute setBroadcastReceiver
 
-        mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-        sMediaPlayer = new MediaPlayer();
-        sMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        sMediaPlayer.setOnPreparedListener(this);
-        sMediaPlayer.setOnCompletionListener(this);
-
-        setBroadcastReceiver();
     }
 
     private void prepareThenPlay(Track track) {
@@ -63,15 +55,6 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
         // Execute sendTicker
         // Make the send track the current track
 
-        try {
-            sMediaPlayer.reset();
-            sMediaPlayer.setDataSource(track.streamUrl);
-            sMediaPlayer.prepare();
-            sendTicker(track);
-            mCurrentTrack = track;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -85,11 +68,6 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
         // Pause if play and the same track
         // Else prepareThenPlay
 
-        if (sMediaPlayer.isPlaying() && mCurrentTrack.id.equals(track.id)) {
-            sMediaPlayer.pause();
-        } else {
-            prepareThenPlay(track);
-        }
     }
 
     private void setBroadcastReceiver() {
@@ -103,22 +81,6 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
         // Create an IntentFilter with SERVICE_TOGGLE_PLAY
         // register the BroadcastReceiver with the IntentFilter
 
-        BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                Log.d(TAG, action);
-
-                if (action.equals(SERVICE_TOGGLE_PLAY)) {
-                    Track track = (Track) intent.getSerializableExtra("track");
-                    togglePlay(track);
-                }
-            }
-        };
-
-        IntentFilter intentFilter = new IntentFilter(SERVICE_TOGGLE_PLAY);
-        registerReceiver(mIntentReceiver, intentFilter);
     }
 
     private void sendTicker(Track track) {
@@ -131,14 +93,6 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
         //// build
         // Notify the notification with the NotificationManager
 
-        Notification notification = new Notification.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setTicker(track.artist + " - " + track.title)
-                .setContentTitle(track.title)
-                .setContentText(track.artist)
-                .build();
-
-        mNotificationManager.notify(0, notification);
     }
 
     @Override
@@ -146,6 +100,5 @@ public class MusicPlaybackService extends Service implements MediaPlayer.OnPrepa
 
         // prepareThenPlay with the next track of the playlist
 
-        prepareThenPlay(Playlist.getNextTrack(mCurrentTrack));
     }
 }

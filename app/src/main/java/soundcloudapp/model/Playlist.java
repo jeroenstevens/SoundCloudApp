@@ -31,15 +31,6 @@ public class Playlist {
         // Set nextTrack to nextEntry's value
         // Set current position to nextEntry's value
 
-        Map.Entry<Integer, Track> nextEntry = sTracks.higherEntry(sCurrentPosition);
-
-        if (nextEntry == null) {
-            nextEntry = sTracks.firstEntry();
-        }
-
-        Track nextTrack = nextEntry.getValue();
-        sCurrentPosition = nextEntry.getKey();
-
-        return nextTrack;
+        return null;
     }
 }

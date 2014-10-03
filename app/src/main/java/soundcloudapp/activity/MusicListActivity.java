@@ -48,27 +48,6 @@ public class MusicListActivity extends Activity {
         //// Send the track from the playlist with the intent to the service
         // Start the MusicPlaybackService
 
-        setContentView(R.layout.music_list_view);
-
-        mMusicListView = (ListView) findViewById(R.id.music_list_view);
-
-        if (Playlist.getSize() == 0) {
-            fetchTracks();
-        }
-
-        mMusicListView.setAdapter(new MusicListAdapter(this));
-
-        mMusicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(TAG, "onItemClick : " + i);
-                Intent intent = new Intent(MusicPlaybackService.SERVICE_TOGGLE_PLAY);
-                intent.putExtra("track", Playlist.getTrack(i));
-                sendBroadcast(intent);
-            }
-        });
-
-        startService(new Intent(this, MusicPlaybackService.class));
     }
 
     public void fetchTracks() {
@@ -89,72 +68,6 @@ public class MusicListActivity extends Activity {
         ////// Get the track jsonobject
         ////// Create a new track with the information of the track jsonobject
         //// Update the rows in the ListView
-
-        new AsyncTask<String, Object, Object>() {
-
-            protected Object doInBackground(String... params) {
-
-                try {
-                    URL url = new URL(params[0]);
-                    // Create a connection
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-
-                    connection.connect();
-
-                    // Log Response code and message
-                    Log.i(TAG, "status: "+ connection.getResponseCode());
-                    Log.i(TAG, "status message: "+ connection.getResponseMessage());
-
-                    InputStream inputStream = connection.getInputStream();
-
-                    String jsonString = InpuStreamConverter.toString(inputStream);
-
-                    connection.disconnect();
-
-                    return Json.fromStringToJson(jsonString);
-
-                } catch (ProtocolException  e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                return null;
-            }
-
-            protected void onPostExecute(Object json) {
-
-                JSONObject jsonObject = (JSONObject) json;
-
-                JSONArray tracks = null;
-                try {
-                    tracks = jsonObject.getJSONArray("tracks");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                if (tracks != null) {
-                    for (int i = 0; i < tracks.length(); i++) {
-
-                        try {
-                            JSONObject track = tracks.getJSONObject(i);
-
-                            Playlist.addTrack(new Track(
-                                    track.getString("id"),
-                                    track.getString("name"),
-                                    track.getJSONArray("artists").getJSONObject(0).getString("name"),
-                                    track.getString("preview_url")
-                            ));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    mMusicListView.invalidateViews();
-                }
-            }
-        }.execute(SPOTIFY_API_URL);
 
     }
 }

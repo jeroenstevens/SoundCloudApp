@@ -27,14 +27,14 @@ public class MusicListAdapter extends BaseAdapter {
     public int getCount() {
 
         // Get the size of the playlist
-        return Playlist.getSize();
+        return 0;
     }
 
     @Override
     public Track getItem(int position) {
 
         // Return track based on position
-        return Playlist.getTrack(position);
+        return null;
     }
 
     @Override
@@ -55,27 +55,6 @@ public class MusicListAdapter extends BaseAdapter {
         // Get a track by getItem()
         // Set the text on the views of the viewHolder
         // Return convertView
-
-        ViewHolder viewHolder;
-
-        if (convertView == null) {
-            convertView = mLayoutInflater.inflate(R.layout.music_list_view_row, null);
-
-            viewHolder = new ViewHolder();
-
-            viewHolder.trackArtist = (TextView) convertView.findViewById(R.id.track_title);
-            viewHolder.trackTitle = (TextView) convertView.findViewById(R.id.track_artist);
-
-            convertView.setTag(viewHolder);
-
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
-
-        final Track track = getItem(position);
-
-        viewHolder.trackArtist.setText(track.artist);
-        viewHolder.trackTitle.setText(track.title);
 
         return convertView;
     }
