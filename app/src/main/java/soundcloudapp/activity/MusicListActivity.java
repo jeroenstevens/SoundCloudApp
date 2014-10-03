@@ -39,6 +39,15 @@ public class MusicListActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Set the content view
+        // Get the ListView from the xml layout
+        // Fetch the tracks of the api when playlist size is 0
+        // Set an new instance of MusicListAdapter on the ListView
+        // Set a OnItemClickListener on the ListView
+        //// Make in the onItemClick an Intent with an action
+        //// Send the track from the playlist with the intent to the service
+        // Start the MusicPlaybackService
+
         setContentView(R.layout.music_list_view);
 
         mMusicListView = (ListView) findViewById(R.id.music_list_view);
@@ -47,7 +56,7 @@ public class MusicListActivity extends Activity {
             fetchTracks();
         }
 
-        mMusicListView.setAdapter(new MusicListAdapter(MusicListActivity.this));
+        mMusicListView.setAdapter(new MusicListAdapter(this));
 
         mMusicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -59,10 +68,27 @@ public class MusicListActivity extends Activity {
             }
         });
 
-        startService(new Intent(MusicListActivity.this, MusicPlaybackService.class));
+        startService(new Intent(this, MusicPlaybackService.class));
     }
 
     public void fetchTracks() {
+
+        // Make a new AsyncTask<String, Object, Object>
+        // Send the api url as parameter with the task
+        // In doInBackground
+        //// Make a new URL with the first parameter
+        //// Make a http connection
+        //// Get the InputStream from the connection
+        //// Convert the InputStream to a String
+        //// Disconnection the connection
+        //// Convert and return the String as JSON
+        // In onPostExecute()
+        //// Typecast the return value to a json object
+        //// Get the JSONArray of tracks
+        //// Make a for loop
+        ////// Get the track jsonobject
+        ////// Create a new track with the information of the track jsonobject
+        //// Update the rows in the ListView
 
         new AsyncTask<String, Object, Object>() {
 
@@ -70,7 +96,6 @@ public class MusicListActivity extends Activity {
 
                 try {
                     URL url = new URL(params[0]);
-                    Log.i(TAG, url.toString());
                     // Create a connection
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");

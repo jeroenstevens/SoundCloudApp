@@ -16,23 +16,22 @@ public class MusicListAdapter extends BaseAdapter {
 
     private static final String TAG = "MusicListAdapter";
 
-    private final Context mContext;
     private final LayoutInflater mLayoutInflater;
 
     public MusicListAdapter(Context context) {
         super();
-        mContext = context;
-        mLayoutInflater = LayoutInflater.from(mContext);
+        mLayoutInflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return Playlist.getSize();
+        return 0;
     }
 
     @Override
     public Track getItem(int position) {
-        return Playlist.getTrack(position);
+        // Get track based on position
+        return null;
     }
 
     @Override
@@ -42,6 +41,9 @@ public class MusicListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        
+
         Log.d(TAG, "getView : " + position);
 
         if (convertView == null) {
