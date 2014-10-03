@@ -24,16 +24,21 @@ public class Playlist {
     }
 
     public static Track getNextTrack(Track track) {
+
+        // Get the next Entry from the TreemMap based on a given position
+        // If nextEntry null
+        //// Set nextEntry as first entry
+        // Set nextTrack to nextEntry's value
+        // Set current position to nextEntry's value
+
         Map.Entry<Integer, Track> nextEntry = sTracks.higherEntry(sCurrentPosition);
 
-        Track nextTrack;
-        if (nextEntry != null) {
-            nextTrack = nextEntry.getValue();
-            sCurrentPosition++;
-        } else {
-            nextTrack = sTracks.firstEntry().getValue();
-            sCurrentPosition = 0;
+        if (nextEntry == null) {
+            nextEntry = sTracks.firstEntry();
         }
+
+        Track nextTrack = nextEntry.getValue();
+        sCurrentPosition = nextEntry.getKey();
 
         return nextTrack;
     }

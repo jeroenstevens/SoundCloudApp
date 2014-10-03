@@ -16,22 +16,24 @@ public class MusicListAdapter extends BaseAdapter {
 
     private static final String TAG = "MusicListAdapter";
 
-    private final Context mContext;
     private final LayoutInflater mLayoutInflater;
 
     public MusicListAdapter(Context context) {
         super();
-        mContext = context;
-        mLayoutInflater = LayoutInflater.from(mContext);
+        mLayoutInflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
+
+        // Get the size of the playlist
         return Playlist.getSize();
     }
 
     @Override
     public Track getItem(int position) {
+
+        // Return track based on position
         return Playlist.getTrack(position);
     }
 
@@ -42,7 +44,18 @@ public class MusicListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d(TAG, "getView : " + position);
+
+        // If convertView null
+        //// Inflate row
+        //// New ViewHolder
+        //// Find views in convertview and pass them to the holder
+        //// Set the ViewHolder as a tag for the view
+        // Else
+        //// Get tag from convertView
+        // Get a track by getItem()
+        // Set the text on the views of the viewHolder
+        // Return convertView
+
         ViewHolder viewHolder;
 
         if (convertView == null) {
@@ -56,13 +69,13 @@ public class MusicListAdapter extends BaseAdapter {
             convertView.setTag(viewHolder);
 
         } else {
-           viewHolder = (ViewHolder) convertView.getTag();
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         final Track track = getItem(position);
 
-        viewHolder.trackTitle.setText(track.title);
         viewHolder.trackArtist.setText(track.artist);
+        viewHolder.trackTitle.setText(track.title);
 
         return convertView;
     }
