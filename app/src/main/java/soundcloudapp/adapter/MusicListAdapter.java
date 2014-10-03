@@ -25,13 +25,16 @@ public class MusicListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 0;
+
+        // Get the size of the playlist
+        return Playlist.getSize();
     }
 
     @Override
     public Track getItem(int position) {
-        // Get track based on position
-        return null;
+
+        // Return track based on position
+        return Playlist.getTrack(position);
     }
 
     @Override
@@ -42,22 +45,43 @@ public class MusicListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        
+        // If convertView null
+        //// Inflate row
+        //// New ViewHolder
+        //// Find views in convertview and pass them to the holder
+        //// Set the ViewHolder as a tag for the view
+        // Else
+        //// Get tag from convertView
+        // Get a track by getItem()
+        // Set the text on the views of the viewHolder
+        // Return convertView
 
-        Log.d(TAG, "getView : " + position);
+        ViewHolder viewHolder;
 
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.music_list_view_row, null);
+
+            viewHolder = new ViewHolder();
+
+            viewHolder.trackArtist = (TextView) convertView.findViewById(R.id.track_title);
+            viewHolder.trackTitle = (TextView) convertView.findViewById(R.id.track_artist);
+
+            convertView.setTag(viewHolder);
+
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         final Track track = getItem(position);
 
-        TextView trackTitleTextView = (TextView) convertView.findViewById(R.id.track_title);
-        TextView trackArtistTextView = (TextView) convertView.findViewById(R.id.track_artist);
-
-        trackTitleTextView.setText(track.title);
-        trackArtistTextView.setText(track.artist);
+        viewHolder.trackTitle.setText(track.title);
+        viewHolder.trackArtist.setText(track.artist);
 
         return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView trackTitle;
+        public TextView trackArtist;
     }
 }
